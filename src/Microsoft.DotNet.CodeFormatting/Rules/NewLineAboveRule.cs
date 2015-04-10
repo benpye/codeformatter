@@ -21,10 +21,29 @@ namespace Microsoft.DotNet.CodeFormatting.Rules
     [SyntaxRuleOrder(SyntaxRuleOrder.NewLineAboveFormattingRule)]
     internal sealed class NewLineAboveRule : CSharpOnlyFormattingRule, ISyntaxFormattingRule
     {
+        private readonly Options _options;
+
+        [ImportingConstructor]
+        internal NewLineAboveRule(Options options)
+        {
+            _options = options;
+        }
+
         public SyntaxNode Process(SyntaxNode syntaxRoot, string languageName)
         {
-            syntaxRoot = ProcessUsing(syntaxRoot);
-            syntaxRoot = ProcessNamespace(syntaxRoot);
+            var firstUsing = syntaxRoot.DescendantNodesAndSelf().OfType<UsingDirectiveSyntax>().FirstOrDefault();
+            bool copyrightPresent = !_options.CopyrightHeader.IsDefaultOrEmpty;
+
+            if (copyrightPresent)
+            {
+                syntaxRoot = ProcessUsing(syntaxRoot);
+            }
+
+            if (firstUsing != null || copyrightPresent)
+            {
+                syntaxRoot = ProcessNamespace(syntaxRoot);
+            }
+
             return syntaxRoot;
         }
 

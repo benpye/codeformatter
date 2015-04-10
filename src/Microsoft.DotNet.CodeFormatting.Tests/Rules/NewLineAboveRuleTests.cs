@@ -11,9 +11,11 @@ namespace Microsoft.DotNet.CodeFormatting.Tests
 {
     public class NewLineAboveRuleTests : SyntaxRuleTestBase
     {
+        private readonly Options _options = new Options();
+
         internal override ISyntaxFormattingRule Rule
         {
-            get { return new Rules.NewLineAboveRule(); }
+            get { return new Rules.NewLineAboveRule(_options); }
         }
 
         /// <summary>
